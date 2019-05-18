@@ -14,6 +14,20 @@ function posts(router){
         await app.render(ctx.req, ctx.res, '/posts/new', ctx.query);
         ctx.respond = false;
     })
+    .get('/posts/:id/show', async ctx => {
+        const user = ctx.query.currentUser.user;
+        console.log({user});
+        
+        await app.render(ctx.req, ctx.res, '/posts/show', ctx.query);
+        ctx.respond = false;
+    })
+    .get('/posts/:id/preview', async ctx => {
+        const user = ctx.query.currentUser.user;
+        console.log({user});
+        
+        await app.render(ctx.req, ctx.res, '/posts/preview', ctx.query);
+        ctx.respond = false;
+    })
     .post('/posts', async ctx => {
         const user = await User.findById(ctx.query.currentUser.user._id);
         const { content, cover, breif, speed, title, password } = ctx.request.body;

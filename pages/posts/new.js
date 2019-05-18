@@ -166,8 +166,17 @@ class NewPost extends React.Component {
         this.updatePost(id,
           response => {
             console.log(response);
+          window.location.assign(`/posts/${id}/preview/`);
+
           }
         )
+      }else{
+        this.createPost(id=>{
+          this.setState({
+            id,
+          });
+          window.location.assign(`/posts/${id}/preview/`);
+        });
       }
     }
 

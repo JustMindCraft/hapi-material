@@ -30,6 +30,10 @@ const PostSchema = new Schema({
         type: Number,
         default: 0.1
     },
+    isDeleted: {
+        type: Boolean,
+        default: false,
+    },
     updated: { type: Date, default: Date.now },
     created: { type: Date, default: Date.now },
 }, { id: true });

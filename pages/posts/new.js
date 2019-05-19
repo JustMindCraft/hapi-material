@@ -2,9 +2,10 @@ import TextField from '@material-ui/core/TextField';
 import Home from "../../components/layouts/Home";
 import Head from 'next/head';
 import './new.css';
-import { Button, Divider, CircularProgress, Typography } from '@material-ui/core';
+import { Button, Divider, CircularProgress, Typography, Paper } from '@material-ui/core';
 import PostSetting from '../../components/modules/post/PostSetting';
 import axios from 'axios';
+import Breadcrumbs from '@material-ui/lab/Breadcrumbs';
 
 class NewPost extends React.Component {
     constructor(props){
@@ -24,14 +25,13 @@ class NewPost extends React.Component {
     }
     createPost = (cb) => {
         const data = this.getData();
-        const contentTXT = this.ue.getContentTxt();
-        if(contentTXT.length>=150){
-          axios.post("/posts", {...data})
-          .then(response => {
-              cb(response.data._id);
-          })
-        }
+       
+        axios.post("/posts", {...data})
+        .then(response => {
+            cb(response.data._id);
+        })
     }
+
 
     updatePost = (id, cb) => {
       const data = this.getData();
@@ -57,6 +57,10 @@ class NewPost extends React.Component {
         
       });
       const autocreate = setInterval(()=>{
+        const contentTXT = this.ue.getContentTxt();
+        if(contentTXT.length <= 150){
+          return false;
+        }
         this.createPost(id=>{
           if(id){
             this.setState({
@@ -107,7 +111,7 @@ class NewPost extends React.Component {
 
     getData = () => {
       const content = this.ue.getContent();
-      const { cover, breif, speed, title, password } = this.state;
+      const { cover, breif, speed, title, password, status } = this.state;
       let breifTXT = breif;
       if(breifTXT===""){
         breifTXT = this.ue.getContentTxt().substring(0, 150);
@@ -119,10 +123,15 @@ class NewPost extends React.Component {
         speed,
         title,
         password,
+        status,
       }
     }
 
     saveDraft = () => {
+      this.setState({
+        pending: true,
+        pendingText: "正在保存草稿"
+      })
       const { content, cover, breif, speed, title } = this.getData();
       console.log({
         content, 
@@ -143,7 +152,8 @@ class NewPost extends React.Component {
 
     publish = () => {
       this.setState({
-        publishing: true,
+        pending: true,
+        pendingText: "正在发布"
       })
       const { content, cover, breif, speed, title, password } = this.getData();
       console.log({
@@ -162,7 +172,7 @@ class NewPost extends React.Component {
         pendingText: "正在生成预览"
       })
       const { id } = this.state;
-      if(id!=""){
+      if(id!==""){
         this.updatePost(id,
           response => {
             console.log(response);
@@ -172,6 +182,8 @@ class NewPost extends React.Component {
         )
       }else{
         this.createPost(id=>{
+          console.log(id, id);
+          
           this.setState({
             id,
           });
@@ -221,11 +233,24 @@ class NewPost extends React.Component {
             <Home currentUser={currentUser} title="发表文章">
              <Head>
                 <title>乐多多云收益 | 新建文章</title>
-                <script type="text/javascript" charset="utf-8" src="/ueditor/ueditor.config.js"></script>
-                <script type="text/javascript" charset="utf-8" src="/ueditor/ueditor.all.min.js"> </script>
-                <script type="text/javascript" charset="utf-8" src="/ueditor/lang/zh-cn/zh-cn.js"> </script>
+                <script type="text/javascript" charSet="utf-8" src="/ueditor/ueditor.config.js"></script>
+                <script type="text/javascript" charSet="utf-8" src="/ueditor/ueditor.all.min.js"> </script>
+                <script type="text/javascript" charSet="utf-8" src="/ueditor/lang/zh-cn/zh-cn.js"> </script>
               </Head>
               <div>
+                <Paper style={{
+                  padding: 10
+                }}>
+                <Breadcrumbs aria-label="Breadcrumb">
+                  <a color="inherit" href="/personal" >
+                    个人中心
+                  </a>
+                  <a color="inherit" href="/posts">
+                    文章列表
+                  </a>
+                  <Typography color="textPrimary">新建文章</Typography>
+                </Breadcrumbs>
+                </Paper>
                   <TextField
                     required
                     id="outlined-required"
@@ -270,6 +295,6 @@ NewPost.getInitialProps = async (props) => {
       currentUser: props.query.currentUser,
       personalMiner: props.query.personalMiner,
     }
-  }
+}
 
 export default NewPost;

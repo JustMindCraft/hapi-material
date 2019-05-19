@@ -1,4 +1,5 @@
 const access = async (ctx, next) => {
+  
     if(ctx.path.indexOf('/_next/')>=0){
         //过滤掉静态链接
         return await next();
@@ -6,6 +7,11 @@ const access = async (ctx, next) => {
     //这里定义什么scope能够访问什么path
     if(ctx.path === "/admin")
     {
+      if(ctx.scope.includes("nobody")){
+        return ctx.redirect("/login?msg=login_first");
+      }
+    }
+    if(ctx.path.indexOf('/posts/')>=0 && ctx.path.indexOf('preview')>=0 ){
       if(ctx.scope.includes("nobody")){
         return ctx.redirect("/login?msg=login_first");
       }
@@ -23,6 +29,12 @@ const access = async (ctx, next) => {
       }
     }
     if(ctx.path === "/posts/new")
+    {
+      if(ctx.scope.includes("nobody")){
+       return  ctx.redirect("/login?msg=login_first");
+      }
+    }
+    if(ctx.path === "/posts")
     {
       if(ctx.scope.includes("nobody")){
        return  ctx.redirect("/login?msg=login_first");

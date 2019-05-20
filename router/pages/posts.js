@@ -54,6 +54,13 @@ function posts(router){
         await app.render(ctx.req, ctx.res, '/posts/access', ctx.query);
         ctx.respond = false;
     })
+    .get('/posts/:id/edit', async ctx => {
+        const { id } = ctx.params;
+        const post = await Post.findById(id);
+        ctx.query.post = post
+        await app.render(ctx.req, ctx.res, '/posts/edit', ctx.query);
+        ctx.respond = false;
+    })
     .post('/posts/:id/access', async ctx => {
         const { id } = ctx.params;
         const { password, access } = ctx.request.body;
@@ -80,7 +87,7 @@ function posts(router){
         const user = await User.findById(ctx.query.currentUser.user._id);
         const { content, cover, breif, speed, title, password } = ctx.request.body;
         const post = await Post.create({
-            content, cover, breif, speed, title, password, user, isPublic: password===""
+            content, cover, breif, speed, title: title!==""? title: "未命名标题", password, user, isPublic: password===""
         })
         ctx.body = post;
         

@@ -1,3 +1,5 @@
+import { Link } from "@material-ui/core";
+
 class Posts extends React.Component {
     render(){
         const { posts } = this.props;
@@ -6,6 +8,8 @@ class Posts extends React.Component {
                 {posts.map((post, index)=> 
                 <li key={index}>
                     {post.title}
+                    &nbsp;<Link href={`/posts/${post._id}/edit`}>编辑</Link>
+                    &nbsp;<Link href={`/posts/${post._id}`}>查看</Link>
                 </li>
                 )}
             </ul>

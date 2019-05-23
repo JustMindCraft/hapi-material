@@ -12,6 +12,7 @@ const posts = require('./pages/posts');
 //api
 const minersApi = require('./apis/miners');
 const videosApi = require('./apis/videos');
+const postsApi = require('./apis/posts');
 
 
 const app = require("../NextApp");
@@ -32,7 +33,8 @@ videosApi(router);
 posts(router);
 
 //api
-minersApi(router)
+minersApi(router);
+postsApi(router);
 
 router.get('*', async ctx => {
     await app.render(ctx.req, ctx.res, '/404', ctx.query);

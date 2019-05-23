@@ -23,7 +23,6 @@ class PostEdit extends React.Component {
     }
     createPost = (cb) => {
         const data = this.getData();
-       
         axios.post("/posts", {...data})
         .then(response => {
             cb(response.data._id);
@@ -33,7 +32,6 @@ class PostEdit extends React.Component {
 
     updatePost = (id, cb) => {
       const data = this.getData();
-     
       axios.patch("/posts/"+id, {...data})
           .then(
           response => {
@@ -51,6 +49,9 @@ class PostEdit extends React.Component {
                title: post.title,
                id: post._id,
                EditorStart: true,
+               cover: post.cover,
+               speed: post.speed,
+               breif: post.breif,
            });
        }
       this.ue = UE.getEditor('editor', {
@@ -74,6 +75,8 @@ class PostEdit extends React.Component {
         
       });
       const autocreate = setInterval(()=>{
+       const { id } = this.state;
+        
         const contentTXT = this.ue.getContentTxt();
         if(contentTXT.length <= 150 || id!=="" || post){
           return false;
@@ -92,7 +95,6 @@ class PostEdit extends React.Component {
 
       const autosave = setInterval(()=>{
         const { id } = this.state;
-        const data = this.getData();
         if(id!==""){
           console.log("可以自动保存");
           this.updatePost(id, response=>{
@@ -119,7 +121,7 @@ class PostEdit extends React.Component {
       
     }
 
-    getSpeed = speed => {
+    getSpeed = (speed=10) => {
       this.setState({
         speed,
       })
@@ -130,9 +132,17 @@ class PostEdit extends React.Component {
       const content = this.ue.getContent();
       const { cover, breif, speed, title, password, status } = this.state;
       let breifTXT = breif;
-      if(breifTXT===""){
+      if(breifTXT==="" || !breif){
         breifTXT = this.ue.getContentTxt().substring(0, 150);
       }
+      let isPublic = false;
+      if(password==="" || !password){
+        isPublic = true;
+      }
+
+      console.log({isPublic});
+      
+      
       return {
         content,
         cover,
@@ -141,6 +151,7 @@ class PostEdit extends React.Component {
         title,
         password,
         status,
+        isPublic
       }
     }
 
@@ -149,38 +160,33 @@ class PostEdit extends React.Component {
         pending: true,
         pendingText: "正在保存草稿"
       })
-      const { content, cover, breif, speed, title } = this.getData();
-      console.log({
-        content, 
-        cover, 
-        breif,
-        speed,
-        title,
-      });
-      const axios = require('axios');
-      axios.post("/posts/autosave")
-      .then(response => {
-        console.log(response);
-        
+      const { id } = this.state;
+      this.updatePost(id, response => {
+        if(response.data._id === id){
+          window.location.assign("/posts?status=draft")
+          }
       })
-      ;
       
     }
 
     publish = () => {
       this.setState({
         pending: true,
-        pendingText: "正在发布"
+        pendingText: "正在发表"
       })
-      const { content, cover, breif, speed, title, password } = this.getData();
-      console.log({
-        content, 
-        cover, 
-        breif,
-        speed,
-        title,
-        breif
-      });
+      const { id } = this.state;
+      this.updatePost(id, response => {
+        const { _id } = response.data;
+        axios.patch(`/api/posts/${_id}/publish`)
+        .then(
+        response => {
+          if(response.data._id === id){
+            window.location.assign("/posts?status=published")
+            }
+          }
+        ) 
+      })
+      
     }
 
     preview = () => {
@@ -192,8 +198,7 @@ class PostEdit extends React.Component {
       if(id!==""){
         this.updatePost(id,
           response => {
-            console.log(response);
-          window.location.assign(`/posts/${id}/preview/`);
+             window.location.assign(`/posts/${id}/preview/`);
 
           }
         )
@@ -220,7 +225,17 @@ class PostEdit extends React.Component {
     }
 
     render(){
-        const { EditorStart, pending, pendingText, title } = this.state;
+        const { EditorStart, pending, pendingText, title, id } = this.state;
+        let { post } = this.props;
+        let { speed, cover, breif, password } = {};
+        if(post){
+          speed = post.speed;
+          cover = post.cover;
+          breif = post.breif;
+          password = post.password;
+        }
+        
+      
         if(pending){
           return (
             <div style={{
@@ -253,19 +268,7 @@ class PostEdit extends React.Component {
                 <script type="text/javascript" charSet="utf-8" src="/ueditor/lang/zh-cn/zh-cn.js"> </script>
               </Head>
               <div>
-                <Paper style={{
-                  padding: 10
-                }}>
-                <Breadcrumbs aria-label="Breadcrumb">
-                  <Link color="inherit" href="/personal" >
-                    个人中心
-                  </Link>
-                  <Link color="inherit" href="/posts">
-                    文章列表
-                  </Link>
-                  <Typography color="textPrimary">新建文章</Typography>
-                </Breadcrumbs>
-                </Paper>
+               
                   <TextField
                     required
                     id="outlined-required"
@@ -282,13 +285,13 @@ class PostEdit extends React.Component {
                   }}>
 
                   </div>
-                  <script id="editor" type="text/plain" style={{width:"100%",height:500}}>{!EditorStart? "此处编辑您的文章": ""}</script>
+                  <script id="editor" type="text/plain" style={{width:"100%",height:500}}>{!EditorStart? "此处编辑您的文章，字数多于150方可发布或者保存": ""}</script>
                   <div>
                     <br/>
                     <Divider />
                     <br/>
                   </div>
-                  <PostSetting getCoverUrl={this.getCoverUrl} getBreif={this.getBreif} getSpeed={this.getSpeed} setPassword={this.setPassword} />
+                  <PostSetting password={password} breif={breif} speed={speed} cover={cover} getCoverUrl={this.getCoverUrl} getBreif={this.getBreif} getSpeed={this.getSpeed} setPassword={this.setPassword} />
                   <div>
                     <Divider />
                   </div>
@@ -298,8 +301,8 @@ class PostEdit extends React.Component {
                     alignItems: "center",
                     justifyContent: "space-around"
                   }}>
-                  <Button color="primary"  variant="outlined" onClick={this.saveDraft}>保存草稿</Button>
-                  <Button color="secondary" variant="contained" onClick={this.publish}>发布</Button>
+                  <Button disabled={id===""} color="primary"  variant="outlined" onClick={this.saveDraft}>保存草稿</Button>
+                  <Button  disabled={id===""} color="secondary" variant="contained" onClick={this.publish}>发布</Button>
                   <Button color="default"  variant="outlined" onClick={this.preview}>预览</Button>
 
                   </div>

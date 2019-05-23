@@ -60,6 +60,17 @@ class CoverUpload extends React.Component {
        
         
     }
+
+    componentDidMount(){
+        const { cover } = this.props;
+        if(cover!=="" && cover){
+            this.setState({
+                done: true,
+                url: cover,
+            })
+        }
+       
+    }
     
     render(){
         const { uploading, progress, done, url} = this.state;

@@ -7,8 +7,17 @@ function posts(router){
     router
     .get('/posts', async ctx => {
         const user = ctx.query.currentUser.user;
-        const posts = await Post.find({user}).sort({created: -1}).limit(25)
+        let {pagesize, page} = ctx.query;
+        if(!pagesize){
+            pagesize = 25;
+        }
+        if(!page){
+            page = 1;
+        }
+        const posts = await Post.find({user}, {skip: (page-1)*pagesize}).sort({created: -1}).limit(pagesize)
         ctx.query.posts = posts;
+        ctx.query.page = page;
+        ctx.query.pagesize = pagesize;
         await app.render(ctx.req, ctx.res, '/posts', ctx.query);
         ctx.respond = false;
     })
@@ -18,6 +27,17 @@ function posts(router){
         
         await app.render(ctx.req, ctx.res, '/posts/new', ctx.query);
         ctx.respond = false;
+    })
+    .get('/posts/count', async ctx => {
+        const user = ctx.query.currentUser.user;
+        let { status} = ctx.query;
+       
+        if(!status){
+            status = "draft";
+        }
+        const count = await Post.count({user: user._id, status});
+        ctx.query.count = count;
+        ctx.body = count;
     })
     .get('/posts/:id', async ctx => {
         
@@ -83,11 +103,23 @@ function posts(router){
         }
        
     })
+    .patch('/posts/:id/publish', async ctx => {
+        const post = await Post.findById(ctx.params.id);
+        await post.update({
+            status: "published"
+        })
+        ctx.body = post;
+       
+    })
     .post('/posts', async ctx => {
         const user = await User.findById(ctx.query.currentUser.user._id);
         const { content, cover, breif, speed, title, password } = ctx.request.body;
+        let isPublic = false;
+        if(password==="" || !password){
+            isPublic = true;
+        }
         const post = await Post.create({
-            content, cover, breif, speed, title: title!==""? title: "未命名标题", password, user, isPublic: password===""
+            content, cover, breif, speed, title: title!==""? title: "未命名标题", password, user, isPublic
         })
         ctx.body = post;
         
@@ -95,8 +127,14 @@ function posts(router){
     .patch("/posts/:id", async ctx => {
         const post = await Post.findById(ctx.params.id);
         const { content, cover, breif, speed, title, password } = ctx.request.body;
+        let isPublic = false;
+        if(password==="" || !password){
+            isPublic = true;
+        }
         await post.update({
-            content, cover, breif, speed, title, password, isPublic: password===""
+            $set: {
+                content, cover, breif, speed, title: title!==""? title: "未命名标题", password, isPublic,
+            }
         })
         ctx.body = post;
     })

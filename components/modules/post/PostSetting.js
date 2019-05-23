@@ -8,7 +8,8 @@ class PostSetting extends React.Component {
         this.state = {
             speed: 10,
             textLength: 0,
-            text: ""
+            text: "",
+            password: ""
         }
     }
     handleChange = (event, value) => {
@@ -37,11 +38,25 @@ class PostSetting extends React.Component {
         
     }
     setPassword = password => {
+        this.setState({
+            password
+        })
         this.props.setPassword(password);
     }
-    render(){
-        const { speed, textLength, text } = this.state;
 
+    componentDidMount(){
+        const { speed, breif, password } = this.props;
+        this.setState({
+            speed,text: breif, password, textLength: breif? breif.length: 0
+        })
+        this.props.getSpeed(speed);
+        this.props.setPassword(password);
+        this.props.getBreif(breif);
+        
+    }
+    render(){
+        const { speed, textLength, text, password } = this.state;
+        const { cover } = this.props;
         return (
             <div style={{
                 display: "flex",
@@ -61,7 +76,7 @@ class PostSetting extends React.Component {
                 alignContent: "center",
                 width: "100%"
               }}>
-                  <CoverUpload getUrl={this.getCover} />
+                  <CoverUpload cover={cover} getUrl={this.getCover} />
                   <div style={{
                       width: "50%",
                       marginLeft: 10
@@ -83,7 +98,7 @@ class PostSetting extends React.Component {
                 width: "100%",
                 textAlign: "center",
               }}>
-                    <Typography variant="subtitle1">设置收益速度:&nbsp;&nbsp;<br/>{speed}%<br/><span style={{
+                    <Typography variant="subtitle1">设置收益速度:&nbsp;&nbsp;<br/>{speed? speed: 10}%<br/><span style={{
                         fontSize: "small",
                         fontStyle: "italic"
                     }}>(!速度会影响<br/>文章页面流畅度)</span></Typography>
@@ -110,7 +125,7 @@ class PostSetting extends React.Component {
                 width: "100%",
                 textAlign: "center",
               }}>
-                  <TextField onChange={e => this.setPassword(e.target.value)} label="设置访问密码(若是留空，则公开文章)" variant="filled" placeholder="设置访问密码(若是留空，则公开文章)" style={{width: 320}} />
+                  <TextField value={password} onChange={e => this.setPassword(e.target.value)} label="设置访问密码(若是留空，则公开文章)" variant="filled" placeholder="设置访问密码(若是留空，则公开文章)" style={{width: 320}} />
               </div>
               <br/>
                

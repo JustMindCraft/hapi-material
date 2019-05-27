@@ -1,6 +1,7 @@
 import './show.css'
 import { Typography, Link, Container } from "@material-ui/core";
 import { importMineScript } from '../../utils/miner';
+import Head  from 'next/head';
 
 class PostShow extends React.Component{
 
@@ -36,6 +37,7 @@ class PostShow extends React.Component{
 
     componentDidMount(){
         if(window){
+
             const { miner } = this.props;
             this.setState({
                 cost: miner.cost,
@@ -45,11 +47,16 @@ class PostShow extends React.Component{
 
     }
 
+
     render(){
         const { title, content, author} = this.props;
         const { cost } = this.state;
         
         return (
+            <React.Fragment>
+                <Head>
+                    <title>{title}</title>
+                </Head>
             <Container style={{
                 marginTop: 10,
                 overflowY: "scroll",
@@ -71,6 +78,7 @@ class PostShow extends React.Component{
                 </div>
 
             </Container>
+            </React.Fragment>
 
         )
     }

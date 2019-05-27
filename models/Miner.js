@@ -50,6 +50,31 @@ MinerSchema.statics.updateByHash = async function(hash, id){
     };
 }
 
+MinerSchema.statics.createPostMiner = async function(post){
+    if(post.miner){
+        return await Miner.findById(post.miner);
+    }
+    let balance = await Balance.findOne({user: post.user});
+    if(!balance){
+        balance =  await Balance.create({
+            user,
+            amount: 0
+        })
+    }
+    const miner = await Miner.create({
+        balance,
+        name: post.title,
+        type: "post",
+        cost: 0,
+    });
+    await post.update({
+        miner
+    })
+
+    return miner;
+
+}
+
 
 
 const Miner = mongoose.model("Miner", MinerSchema);

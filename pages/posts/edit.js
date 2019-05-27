@@ -1,7 +1,7 @@
 import PostEdit from '../../components/modules/post/PostEdit';
 import Home from "../../components/layouts/Home";
 import { Paper, Typography, Link } from '@material-ui/core';
-import Breadcrumbs from '@material-ui/lab/Breadcrumbs';
+import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 
 class EditPost extends React.Component {
    

@@ -1,7 +1,9 @@
 const app = require("../../NextApp");
 const Post = require("../../models/Post");
 const User = require("../../models/User");
+const Miner = require("../../models/Miner");
 const crypto = require('crypto');
+
 
 function posts(router){
     router
@@ -19,6 +21,24 @@ function posts(router){
         ctx.query.page = page;
         ctx.query.pagesize = pagesize;
         await app.render(ctx.req, ctx.res, '/posts', ctx.query);
+        ctx.respond = false;
+    })
+    .get('/new/posts', async ctx => {
+        let {pagesize, page} = ctx.query;
+        if(!pagesize){
+            pagesize = 8;
+        }
+        if(!page){
+            page = 1;
+        }
+        if(parseInt(page)<=0){
+            page = 1;
+        }
+        const posts = await Post.find({status: "published"},null,{skip: (parseInt(page)-1)* parseInt(pagesize)}).sort({created: -1}).limit(parseInt(pagesize))
+        ctx.query.posts = posts;
+        ctx.query.page = page;
+        ctx.query.pagesize = pagesize;
+        await app.render(ctx.req, ctx.res, '/new_posts', ctx.query);
         ctx.respond = false;
     })
     .get('/posts/new', async ctx => {
@@ -43,27 +63,24 @@ function posts(router){
         
         const { id } = ctx.params;
         const post = await Post.findById(id);
+        const currentUser = ctx.query.currentUser;
+        if(!currentUser){
+            ctx.redirect("/posts");
+        }
+        const miner = await Miner.createPostMiner(post);
+    
         const md5 = crypto.createHash('md5');
         if(post.isPublic || ctx.cookies.get(`${id}_password`)===md5.update(post.password).digest('hex')){
+            const user = await User.findById(post.user);
             ctx.query.post = post 
+            ctx.query.author = user;
+            ctx.query.miner = miner;
+            await post.update({read: post.read? post.read+1: 1});
             await app.render(ctx.req, ctx.res, '/posts/show', ctx.query);
             ctx.respond = false;
         }else{
             ctx.redirect(`/posts/${id}/access`);
         }
-    })
-    .get('/posts/:id/preview', async ctx => {
-        const { id } = ctx.params;
-        const post = await Post.findById(id);
-        const md5 = crypto.createHash('md5');
-        if(post.isPublic || ctx.cookies.get(`${id}_password`)===md5.update(post.password).digest('hex')){
-            ctx.query.post = post 
-            await app.render(ctx.req, ctx.res, '/posts/preview', ctx.query);
-            ctx.respond = false;
-        }else{
-            ctx.redirect(`/posts/${id}/access?access=preview`);
-        }
-        
     })
     .get('/posts/:id/access', async ctx => {
         const { id } = ctx.params;

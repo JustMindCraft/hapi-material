@@ -22,15 +22,15 @@ router.all('/editor/controller', ueditor(['./public', {
     "imageAllowFiles": [".png", ".jpg", ".jpeg", ".mp4"],
     "imagePathFormat": "/upload/ueditor/image/{yyyy}{mm}{dd}/{filename}"  
 }]));
-
-home(router);
+personal(router);
+posts(router);
 register(router);
 admin(router);
 login(router);
-personal(router);
 likeu(router);
 videosApi(router);
-posts(router);
+home(router);
+
 
 //api
 minersApi(router);

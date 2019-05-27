@@ -19,16 +19,16 @@ const styles = theme => ({
 
   layout: {
     width: 'auto',
-    marginLeft: theme.spacing.unit * 3,
-    marginRight: theme.spacing.unit * 3,
-    [theme.breakpoints.up(900 + theme.spacing.unit * 3 * 2)]: {
+    marginLeft: theme.spacing(3),
+    marginRight: theme.spacing(3),
+    [theme.breakpoints.up(900 + theme.spacing(3)*2)]: {
       width: 900,
       marginLeft: 'auto',
       marginRight: 'auto',
     },
   },
   progress: {
-    margin: theme.spacing.unit * 2,
+    margin: theme.spacing(2),
   },
   heroUnit: {
     backgroundColor: theme.palette.background.paper,
@@ -36,10 +36,10 @@ const styles = theme => ({
   heroContent: {
     maxWidth: 600,
     margin: '0 auto',
-    padding: `${theme.spacing.unit * 8}px 0 ${theme.spacing.unit * 6}px`,
+    padding: `${theme.spacing(8)}px 0 ${theme.spacing(6)}px`,
   },
   heroButtons: {
-    marginTop: theme.spacing.unit * 4,
+    marginTop: theme.spacing(4),
   },
   cardHeader: {
     backgroundColor: theme.palette.grey[200],
@@ -48,11 +48,11 @@ const styles = theme => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'baseline',
-    marginBottom: theme.spacing.unit * 2,
+    marginBottom: theme.spacing(2),
   },
   cardActions: {
     [theme.breakpoints.up('sm')]: {
-      paddingBottom: theme.spacing.unit * 2,
+      paddingBottom: theme.spacing(2),
     },
   },
   
@@ -153,7 +153,7 @@ class IndexHome extends React.Component {
                 为您的流量带来额外收益
               </Typography>
               <div className={classes.heroButtons}>
-                <Grid container spacing={16} justify="center">
+                <Grid container spacing={10} justify="center">
                   <Grid item>
                     <Button variant="contained" color="primary">
                       了解详情
@@ -169,7 +169,7 @@ class IndexHome extends React.Component {
             </div>
           </div>
           <div  className={classes.layout}>
-          <Grid container spacing={40} alignItems="center">
+          <Grid container spacing={10} alignItems="center">
           {tiers.map(tier => (
             // Enterprise card is full width at sm breakpoint
             <Grid item key={tier.title} xs={12} sm={tier.title === 'Enterprise' ? 12 : 6} md={4}>
@@ -191,7 +191,7 @@ class IndexHome extends React.Component {
                   ))}
                 </CardContent>
                 <CardActions className={classes.cardActions}>
-                  <Button fullWidth variant={tier.buttonVariant} color="primary">
+                  <Button fullWidth variant={tier.buttonVariant} color="primary"  component="a" href="/register" variant="outlined" color="primary">
                     {tier.buttonText}
                   </Button>
                 </CardActions>

@@ -11,6 +11,12 @@ const access = async (ctx, next) => {
         return ctx.redirect("/login?msg=login_first");
       }
     }
+    if(ctx.path === "/")
+    {
+      if(ctx.scope.includes("logined")){
+        return ctx.redirect("/personal");
+      }
+    }
     if(ctx.path.indexOf('/posts/')>=0 && ctx.path.indexOf('preview')>=0 ){
       if(ctx.scope.includes("nobody")){
         return ctx.redirect("/login?msg=login_first");

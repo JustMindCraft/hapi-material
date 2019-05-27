@@ -22,7 +22,7 @@ const styles = theme => ({
     textAlign: "center"
   }, 
   icon: {
-    marginRight: theme.spacing.unit * 2,
+    marginRight: theme.spacing(2),
   },
   heroUnit: {
     backgroundColor: theme.palette.background.paper,
@@ -30,14 +30,14 @@ const styles = theme => ({
   heroContent: {
     maxWidth: 600,
     margin: '0 auto',
-    padding: `${theme.spacing.unit * 8}px 0 ${theme.spacing.unit * 6}px`,
+    padding: `${theme.spacing(8)}px 0 ${theme.spacing(6)}px`,
   },
   heroButtons: {
-    marginTop: theme.spacing.unit * 4,
+    marginTop: theme.spacing(4),
   },
   
   cardGrid: {
-    padding: `${theme.spacing.unit * 8}px 0`,
+    padding: `${theme.spacing(8)}px 0`,
   },
   card: {
     height: '100%',
@@ -52,7 +52,7 @@ const styles = theme => ({
   },
   footer: {
     backgroundColor: theme.palette.background.paper,
-    padding: theme.spacing.unit * 6,
+    padding: theme.spacing(6),
     width: "100%"
   },
 });
@@ -95,6 +95,7 @@ class HomeLayout extends React.Component{
         <AppBar position="fixed" className={classes.appBar}>
           <Toolbar>
             <Button component='a' href="/" color="inherit" size="large">云收益</Button>
+            <Button component='a' href="/new/posts" color="inherit" size="large">最新文章</Button>
 
             <Typography  className={classes.title} variant="h6" color="inherit" noWrap>
                 {this.props.title}

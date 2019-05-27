@@ -3,7 +3,6 @@ import Head from 'next/head';
 import { Button, Divider, CircularProgress, Typography, Paper, Link } from '@material-ui/core';
 import PostSetting from './PostSetting';
 import axios from 'axios';
-import Breadcrumbs from '@material-ui/lab/Breadcrumbs';
 
 class PostEdit extends React.Component {
     constructor(props){
@@ -198,7 +197,7 @@ class PostEdit extends React.Component {
       if(id!==""){
         this.updatePost(id,
           response => {
-             window.location.assign(`/posts/${id}/preview/`);
+             window.location.assign(`/posts/${id}`);
 
           }
         )

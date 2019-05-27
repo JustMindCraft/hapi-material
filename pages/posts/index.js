@@ -1,7 +1,7 @@
 import { Link, Paper, Typography } from "@material-ui/core";
 import EnhancedTable from "../../components/modules/EnhancedTable";
 import Home from "../../components/layouts/Home";
-import Breadcrumbs from "@material-ui/lab/Breadcrumbs";
+import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import PostTableDataItem from "../../components/modules/PostTableDataItem";
 
 const rows = [

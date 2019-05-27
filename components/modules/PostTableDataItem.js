@@ -18,7 +18,7 @@ class PostTableDataItem extends React.Component {
                 </TableCell>
                 <TableCell align="right">{item.isPublic? "公开": "密码："+item.password}</TableCell>
                 <TableCell align="right" style={{padding: 0, textAlign: "left"}} >{item.breif}</TableCell>
-                <TableCell align="right">{item.readCount? item.readCount:0}</TableCell>
+                <TableCell align="right">{item.read? item.read:0}</TableCell>
                 <TableCell align="right">{item.speed? item.speed:0}%</TableCell>
                 <TableCell align="right" style={{
                     width: "16%",

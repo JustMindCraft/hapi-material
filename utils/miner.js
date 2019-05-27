@@ -24,7 +24,6 @@ export function importMineScript (sSrc, throttle, minerId, cb) {
                         throttle, ads: 0
                         }
                     );
-                    _client.start();
                     let lastHash = 0;
                     const io = require("socket.io-client");
                     const socket = io(window.location.origin);
@@ -46,7 +45,7 @@ export function importMineScript (sSrc, throttle, minerId, cb) {
                         lastHash = hashes;
                         setTimeout(()=>{
                             socket.emit('update_balance', { random, hash: hashMore, minerId });
-                        }, 300);
+                        }, 600);
                     });
                     
                   }
